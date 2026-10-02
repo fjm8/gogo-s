@@ -1,0 +1,18 @@
+<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>body{font-family:sans-serif;background:#000;color:#fff;padding:15px} table{width:100%;border-collapse:collapse} td,th{border:1px solid #444;padding:10px;text-align:left} th{background:#222} .low{color:red;font-weight:bold} .ok{color:#0f0}</style>
+<meta http-equiv="refresh" content="10">
+</head><body>
+<h1>GoGo's - OWNER DASHBOARD</h1>
+<h2>Sales Today: R{{ data.sales_today }}</h2>
+<h3>Stock (auto-refresh 10s)</h3>
+<table><tr><th>Product</th><th>Stock Bottles</th><th>Status</th></tr>
+{% for name, info in data.products.items() %}
+<tr><td>{{ name }}</td><td>{{ info.stock }}</td><td class="{{ 'low' if info.stock < 10 else 'ok' }}">{{ 'LOW! ORDER' if info.stock < 10 else 'OK' }}</td></tr>
+{% endfor %}
+</table>
+<h3>Last Actions</h3>
+{% for line in data.log[-20:] | reverse %}
+<div style="border-bottom:1px solid #333;padding:5px">{{ line }}</div>
+{% endfor %}
+<br><a href="/sell" style="color:#0f0">TILL</a> | <a href="/in" style="color:#0f0">STOCK IN</a>
+</body></html>
