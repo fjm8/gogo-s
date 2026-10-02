@@ -1,0 +1,27 @@
+<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<style>body{font-family:sans-serif;text-align:center;background:#111;color:#fff;padding:10px} #reader{width:100%} button{width:95%;padding:30px;font-size:28px;background:#00ff88;color:#000;border:none;border-radius:15px;margin:10px 0;font-weight:bold} #msg{font-size:22px;margin:15px;padding:15px;border-radius:10px}</style>
+</head><body>
+<h1>GoGo's - TILL</h1>
+<div id="reader"></div>
+<button onclick="startScan()">🔫 SCAN TO SELL</button>
+<div id="msg">Ready</div>
+<script>
+let qr;
+function startScan(){
+ document.getElementById('msg').innerText='Camera opening...';
+ qr = new Html5Qrcode("reader");
+ qr.start({facingMode:"environment"},{fps:15,qrbox:250},
+ (code)=>{
+  qr.stop();
+  fetch('/api/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:code,mode:'sell',qty:1})})
+  .then(r=>r.json()).then(d=>{
+   if(d.status=='unknown'){ document.getElementById('msg').innerHTML='NEW BARCODE: '+code+'<br>Go to /in page to learn'; }
+   else { document.getElementById('msg').innerHTML='SOLD: '+d.product+'<br>Stock left: '+d.stock; navigator.vibrate(200); }
+   setTimeout(startScan,1500);
+  });
+ },()=>{});
+}
+</script>
+<br><a href="/in" style="color:#aaa">Go to STOCK IN</a> | <a href="/owner" style="color:#aaa">OWNER</a>
+</body></html>
